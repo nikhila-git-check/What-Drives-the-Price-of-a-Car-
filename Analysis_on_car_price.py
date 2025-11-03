@@ -3,8 +3,9 @@
 # =============================
 # Goal: Predict car price, identify key drivers, and extract actionable insights for a dealership.
 
+
 # =============================
-# Imports & Setup
+# Import
 # =============================
 import warnings, numpy as np, pandas as pd, matplotlib.pyplot as plt, seaborn as sns
 warnings.filterwarnings("ignore")
@@ -26,9 +27,9 @@ def eval_regression(y_true, y_pred):
     return {"RMSE": rmse, "MAE": mae, "R2": r2}
 
 # =============================
-# Data Understanding
+# Data analysis
 # =============================
-df = pd.read_csv("../data/used_cars.csv")   # adjust path if needed
+df = pd.read_csv("../data/used_cars.csv")  
 print(df.head())
 print(df.shape)
 print(df.isna().mean().sort_values(ascending=False).head(10))
@@ -41,7 +42,7 @@ keep_cols = [
 df = df[[c for c in keep_cols if c in df.columns]].copy()
 
 # Basic sanity filters
-df = df[df["price"].between(500, 150000)]   # drop ridiculous prices
+df = df[df["price"].between(500, 150000)]   # drop high prices
 if "year" in df.columns:
     df = df[df["year"].between(1985, 2025)]
 if "odometer" in df.columns:
@@ -52,7 +53,7 @@ df = df.dropna(subset=["price"])
 print("Rows after cleaning:", df.shape[0])
 
 # =============================
-# Quick EDA (Descriptive)
+#  EDA 
 # =============================
 fig, ax = plt.subplots()
 sns.histplot(df["price"], bins=60, kde=True, ax=ax)
@@ -82,7 +83,7 @@ for cat in ["manufacturer","condition","transmission","fuel","type"]:
         plt.show()
 
 # =============================
-# Data Preparation
+# Data Prep
 # =============================
 target = "price"
 y = df[target].values
@@ -134,7 +135,7 @@ cv_report(RandomForestRegressor(n_estimators=300, random_state=42, n_jobs=-1), "
 cv_report(GradientBoostingRegressor(random_state=42), "GradientBoosting (default)")
 
 # =============================
-# Grid Search (RF & GB)
+# Grid Search (RF  and GB)
 # =============================
 rf_pipe = Pipeline(steps=[("prep", preprocess),
                          ("model", RandomForestRegressor(random_state=42, n_jobs=-1))])
@@ -167,7 +168,7 @@ print("GB best params:", gb_gs.best_params_)
 print("GB best CV RMSE:", -gb_gs.best_score_)
 
 # =============================
-# Evaluation on Test Set
+# Evaluation 
 # =============================
 candidates = {
     "Linear": Pipeline([("prep", preprocess), ("model", LinearRegression())]),
